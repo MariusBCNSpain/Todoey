@@ -8,8 +8,9 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
-class TodoListViewController: UITableViewController {
+class TodoListViewController: SwipeTableViewController {
 
     let realm = try! Realm()
     
@@ -24,7 +25,8 @@ class TodoListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        tableView.separatorStyle = .none
+
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
         }
@@ -36,9 +38,17 @@ class TodoListViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         if let item = todoItems?[indexPath.row] {
+            
+            if let colour = UIColor(hexString: selectedCategory!.color)?.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(todoItems!.count)) {
+                colour.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(todoItems!.count))
+                cell.backgroundColor = colour
+                cell.textLabel?.textColor = ContrastColorOf(colour, returnFlat: true)
+            }
+            
             cell.textLabel?.text = item.title
             
             cell.accessoryType = item.done ? .checkmark : .none
@@ -126,6 +136,18 @@ class TodoListViewController: UITableViewController {
 //        }
         tableView.reloadData()
     }
+    
+    override func updateModel(at indexpath: IndexPath) {
+        if let itemForDeletion = todoItems?[indexpath.row] {
+            do{
+                try self.realm.write {
+                    self.realm.delete(itemForDeletion)
+                }
+            } catch {
+                print("Error saving context \(error)")
+            }
+        }
+    }
     }
 
 extension TodoListViewController: UISearchBarDelegate {
@@ -164,6 +186,9 @@ extension TodoListViewController: UISearchBarDelegate {
             tableView.reloadData()
         }
     }
+    
+ 
+    
 }
 
 
