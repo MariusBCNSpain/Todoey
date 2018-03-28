@@ -103,8 +103,8 @@ class CategoryTableViewController: SwipeTableViewController {
     @IBAction func addButtonPressed(_ sender: Any) {
         var textField = UITextField()
         
-        let alert = UIAlertController(title: "Add new Todoey Category", message: "", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Add Category", style: .default) { (action) in
+        let alert = UIAlertController(title: "Neue Kategorie zum Marius sinnem Merkblättle hinzufüge", message: "", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Kategorie hinzufüge", style: .default) { (action) in
             // what will happen when the user presses Add Items
             
             
